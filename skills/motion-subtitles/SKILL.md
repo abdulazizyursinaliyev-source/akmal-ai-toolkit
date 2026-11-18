@@ -51,7 +51,9 @@ ffmpeg -i reel.mp4 -i subs.mov -filter_complex "[0:v][1:v]overlay=0:0" -c:a copy
 
 Uslublar: `pop` · `rise` · `fade` · `typewriter`.  Fon: `?ground=sand|sky|sage|painting`.
 
-## Tipografiya qoidalari (Taste Skill)
+## Subtitrga xos qoidalar
+
+Umumiy dizayn qoidalari — [`skills/brand-design`](../brand-design/SKILL.md). Bu yerda faqat subtitrga xoslari:
 
 | Qoida | Qiymat |
 |---|---|
@@ -59,7 +61,6 @@ Uslublar: `pop` · `rise` · `fade` · `typewriter`.  Fon: `?ground=sand|sky|sag
 | O'lcham | 8cqw (~86px @1080), urg'u 10cqw |
 | Satrda | 2–3 so'z, nafas joyida yangi satr |
 | Ajratish | faol so'z to'liq `#f4f4f4`, qolgani 42% shaffof — **rang marker yo'q** |
-| Registr | sentence case (BOSH HARF EMAS) |
 | Joy | pastdan 24%, yon 7% (Reels/TikTok UI xavfsiz zonasi) |
 | O'qilish | pastki qismda yumshoq qora gradient |
 
