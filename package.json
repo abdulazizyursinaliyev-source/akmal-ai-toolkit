@@ -1,0 +1,17 @@
+{
+  "name": "akmal-ai-toolkit",
+  "version": "1.0.0",
+  "description": "Open-source AI media toolkit: Claude skills, prompts, GSAP motion templates, HTML-to-MP4 renderer and -14 LUFS audio mastering.",
+  "license": "MIT",
+  "scripts": {
+    "setup": "npx playwright install chromium",
+    "render:ad": "node scripts/render-html.js templates/ad-scenes.html ad.mp4",
+    "render:subs": "node scripts/render-html.js templates/motion-subtitles.html subs.mov --transparent",
+    "render:logo": "node scripts/render-html.js templates/logo-reveal.html logo.mp4"
+  },
+  "dependencies": {
+    "gsap": "3.12.5",
+    "playwright": "^1.47.0"
+  },
+  "keywords": ["ai", "video", "gsap", "claude-skills", "prompts", "motion-graphics", "subtitles", "lufs", "uzbek"]
+}

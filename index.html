@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Akmal AI Toolkit — AI media studio</title>
+<meta name="description" content="O'zbek tilidagi ochiq AI media toolkit: motion subtitr, -14 LUFS audio, GSAP animatsiya, logo, multfilm personaj, hook va reklama skill'lari.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="templates/css-animations.css">
+<style>
+  :root {
+    --bg: #ffffff; --surface: #f4f4f4; --ink: #111111; --muted: #6b6b6b;
+    --accent: #1a4be0; --action: #1a4be0; --action-ink: #ffffff;
+    --sand: #d9ccb7; --sand-ink: #2a2622;
+    --line: rgb(17 17 17 / .1);
+    --font: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --r-sm: 8px; --r-md: 12px; --r-lg: 20px;
+    --gut: 80px; --wrap: 1280px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #111111; --surface: #1c1c1c; --ink: #f4f4f4; --muted: #a3a3a3;
+      --action: #ffffff; --action-ink: #111111; --line: rgb(244 244 244 / .12); }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--ink); font: 400 16px/1.55 var(--font); -webkit-font-smoothing: antialiased; }
+  a { color: inherit; }
+  .wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 var(--gut); }
+  @media (max-width: 1024px) { :root { --gut: 48px; } }
+  @media (max-width: 640px)  { :root { --gut: 16px; } }
+
+  nav { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(12px); border-bottom: 1px solid var(--line); }
+  nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 72px; }
+  .logo { font-weight: 500; letter-spacing: -0.025em; text-decoration: none; font-size: 18px; }
+  .nav-links { display: flex; gap: 24px; font-size: 14px; }
+  .nav-links a { text-decoration: none; color: var(--muted); }
+  .nav-links a:hover { color: var(--ink); }
+  @media (max-width: 640px) { .nav-links a:not(.btn) { display: none; } }
+
+  .btn { display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 20px; border-radius: var(--r-sm);
+    background: var(--action); color: var(--action-ink) !important; text-decoration: none; font-weight: 500; font-size: 15px; }
+  .btn.ghost { background: transparent; color: var(--ink) !important; border: 1px solid var(--line); }
+  .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .btn-sm { height: 36px; padding: 0 14px; font-size: 14px; }
+
+  header { padding: 120px 0 72px; }
+  .meta { font-size: 14px; color: var(--muted); margin-bottom: 24px; }
+  h1 { font-weight: 400; font-size: clamp(38px, 6vw, 72px); line-height: 1.04; letter-spacing: -0.025em; max-width: 14ch; }
+  h1 .dim { color: var(--muted); }
+  .lead { font-size: 20px; line-height: 1.5; max-width: 62ch; margin-top: 24px; color: var(--muted); }
+  .cta-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 32px; }
+
+  section { padding: 120px 0 72px; border-top: 1px solid var(--line); }
+  @media (max-width: 640px) { header, section { padding-top: 96px; } section { padding-bottom: 48px; } }
+  h2 { font-weight: 400; font-size: clamp(30px, 4vw, 48px); line-height: 1.1; letter-spacing: -0.025em; margin-bottom: 48px; max-width: 20ch; }
+
+  /* Jonli demolar */
+  .demos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  @media (max-width: 1024px) { .demos { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 640px)  { .demos { grid-template-columns: 1fr; gap: 12px; } }
+  .demo { background: var(--surface); border-radius: var(--r-lg); padding: 16px; }
+  .demo .frame { aspect-ratio: 9/16; border-radius: var(--r-md); overflow: hidden; background: #111; }
+  .demo iframe { width: 100%; height: 100%; border: 0; display: block; }
+  .demo h3 { font-weight: 500; font-size: 20px; letter-spacing: -0.01em; margin: 16px 4px 4px; }
+  .demo p { font-size: 14px; color: var(--muted); margin: 0 4px 8px; }
+  .demo a { font-size: 14px; margin: 0 4px; }
+
+  /* Pipeline */
+  .pipe { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; counter-reset: s; }
+  @media (max-width: 1024px) { .pipe { grid-template-columns: repeat(2, 1fr); } }
+  .pipe div { background: var(--surface); border-radius: var(--r-md); padding: 24px; counter-increment: s; }
+  .pipe div::before { content: counter(s, decimal-leading-zero); display: block; font-size: 13px; color: var(--muted); margin-bottom: 32px; font-variant-numeric: tabular-nums; }
+  .pipe b { display: block; font-weight: 500; font-size: 18px; letter-spacing: -0.01em; }
+  .pipe span { font-size: 14px; color: var(--muted); }
+
+  /* Skill kartalar */
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  @media (max-width: 1024px) { .grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 640px)  { .grid { grid-template-columns: 1fr; gap: 12px; } }
+  .card { display: block; text-decoration: none; border: 1px solid var(--line); border-radius: var(--r-lg); padding: 24px; transition: border-color .2s; }
+  .card:hover { border-color: var(--ink); }
+  .card small { font-size: 13px; color: var(--muted); }
+  .card h3 { font-weight: 500; font-size: 20px; letter-spacing: -0.01em; margin: 8px 0 8px; }
+  .card p { font-size: 15px; color: var(--muted); }
+
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+  @media (max-width: 640px) { .stats { grid-template-columns: 1fr 1fr; } }
+  .stat b { display: block; font-weight: 400; font-size: 38px; letter-spacing: -0.025em; font-variant-numeric: tabular-nums; }
+  .stat span { font-size: 14px; color: var(--muted); }
+
+  pre { background: var(--surface); border-radius: var(--r-md); padding: 24px; overflow-x: auto; font: 14px/1.6 ui-monospace, Menlo, Consolas, monospace; }
+
+  .closing { background: var(--sand); color: var(--sand-ink); border-radius: var(--r-lg); padding: 64px; }
+  .closing h2 { margin-bottom: 24px; }
+  .closing .btn { background: #111; color: #f4f4f4 !important; }
+  @media (max-width: 640px) { .closing { padding: 32px 24px; } }
+
+  footer { padding: 48px 0; font-size: 14px; color: var(--muted); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="logo" href="#">Akmal AI Toolkit</a>
+    <div class="nav-links">
+      <a href="#demo">Demo</a>
+      <a href="#skills">Skill'lar</a>
+      <a href="#start">Boshlash</a>
+      <a class="btn btn-sm" href="https://github.com/abdulazizyursinaliyev-source/akmal-ai-toolkit">★ GitHub</a>
+    </div>
+  </div>
+</nav>
+
+<header><div class="wrap">
+  <p class="meta anim-fade">Ochiq kodli · O'zbek tilida · MIT</p>
+  <h1 class="anim-rise" style="--delay:.05s">AI bilan media yaratish — <span class="dim">brifdan tayyor videogacha.</span></h1>
+  <p class="lead anim-rise" style="--delay:.15s">Hook, skript, multfilm personaj, logo, ovoz, musiqa, SFX, −14 LUFS mastering, animatsion subtitr va GSAP animatsiya — barchasi bitta toolkit'da. Claude skill'lari, tayyor promptlar va ishlaydigan skriptlar.</p>
+  <div class="cta-row anim-rise" style="--delay:.25s">
+    <a class="btn" href="https://github.com/abdulazizyursinaliyev-source/akmal-ai-toolkit">GitHub'da ko'rish</a>
+    <a class="btn ghost" href="#demo">Jonli demo ↓</a>
+  </div>
+</div></header>
+
+<section id="demo">
+  <div class="wrap">
+    <h2>Jonli shablonlar — HTML'dan to'g'ridan-to'g'ri MP4 ga.</h2>
+    <div class="demos anim-stagger">
+      <div class="demo anim-rise">
+        <div class="frame"><iframe src="templates/motion-subtitles.html" title="Motion subtitr demo" ></iframe></div>
+        <h3>Motion subtitr</h3>
+        <p>So'zma-so'z, 4 uslub, xavfsiz zona.</p>
+        <a href="templates/motion-subtitles.html">To'liq ekranda ochish →</a>
+      </div>
+      <div class="demo anim-rise">
+        <div class="frame"><iframe src="templates/ad-scenes.html" title="Kinetik reklama demo" ></iframe></div>
+        <h3>Kinetik reklama</h3>
+        <p>Hook → muammo → mahsulot → foyda → CTA.</p>
+        <a href="templates/ad-scenes.html">To'liq ekranda ochish →</a>
+      </div>
+      <div class="demo anim-rise">
+        <div class="frame"><iframe src="templates/logo-reveal.html" title="Logo animatsiya demo" ></iframe></div>
+        <h3>Logo reveal</h3>
+        <p>SVG chiziladi, to'ladi, nom chiqadi.</p>
+        <a href="templates/logo-reveal.html">To'liq ekranda ochish →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Bitta pipeline — o'nta bosqich.</h2>
+    <div class="pipe">
+      <div><b>Hook</b><span>2 soniya, 12 tur</span></div>
+      <div><b>Skript</b><span>H-P-S-P-C</span></div>
+      <div><b>Vizual</b><span>Veo, rasm, personaj</span></div>
+      <div><b>Audio</b><span>VO, musiqa, SFX</span></div>
+      <div><b>Master</b><span>−14 LUFS, −1 dBTP</span></div>
+      <div><b>Subtitr</b><span>So'zma-so'z</span></div>
+      <div><b>Animatsiya</b><span>GSAP / CSS</span></div>
+      <div><b>Logo</b><span>Brif → SVG → reveal</span></div>
+      <div><b>Render</b><span>HTML → MP4</span></div>
+      <div><b>Deploy</b><span>GitHub Pages</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="wrap">
+    <h2>Claude uchun 6 ta skill.</h2>
+    <div class="grid">
+      <a class="card" href="https://github.com/abdulazizyursinaliyev-source/akmal-ai-toolkit/tree/main/skills/media-director"><small>Bosh rejissyor</small><h3>media-director</h3><p>Brifdan tayyor videogacha 10 bosqichni boshqaradi.</p></a>
+      <a class="card" href="https://github.com/abdulazizyursinaliyev-source/akmal-ai-toolkit/tree/main/skills/story-hook-character"><small>Hikoya</small><h3>story-hook-character</h3><p>Hook, 6 bitli hikoya, izchil multfilm personaj.</p></a>
+      <a class="card" href="https://github.com/abdulazizyursinaliyev-source/akmal-ai-toolkit/tree/main/skills/audio-post"><small>Ovoz</small><h3>audio-post</h3><p>VO, musiqa, SFX, ducking va −14 LUFS master.</p></a>
+      <a class="card" href="https://github.com/abdulazizyursinaliyev-source/akmal-ai-toolkit/tree/main/skills/motion-subtitles"><small>Subtitr</small><h3>motion-subtitles</h3><p>Whisper vaqtlari → GSAP yoki .ass → video.</p></a>
+      <a class="card" href="https://github.com/abdulazizyursinaliyev-source/akmal-ai-toolkit/tree/main/skills/brand-design"><small>Dizayn</small><h3>brand-design</h3><p>Logo, tokenlar, poster, carousel, end card.</p></a>
+      <a class="card" href="https://github.com/abdulazizyursinaliyev-source/akmal-ai-toolkit/tree/main/skills/web-motion-deploy"><small>Web</small><h3>web-motion-deploy</h3><p>GSAP/CSS animatsiya, render va deploy.</p></a>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap stats">
+    <div class="stat"><b>6</b><span>Claude skill</span></div>
+    <div class="stat"><b>9</b><span>Prompt kutubxonasi</span></div>
+    <div class="stat"><b>4</b><span>GSAP/CSS shablon</span></div>
+    <div class="stat"><b>−14</b><span>LUFS master</span></div>
+  </div>
+</section>
+
+<section id="start">
+  <div class="wrap">
+    <h2>3 buyruqda boshlang.</h2>
+<pre><code>git clone https://github.com/abdulazizyursinaliyev-source/akmal-ai-toolkit
+cd akmal-ai-toolkit && npm i playwright gsap && npx playwright install chromium
+
+# Reklama videosi (HTML → MP4)
+node scripts/render-html.js templates/ad-scenes.html ad.mp4
+
+# Ovoz + musiqa + SFX → -14 LUFS
+bash scripts/master-audio.sh -v voice.wav -m music.mp3 -o final.wav</code></pre>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="closing">
+      <h2>Foydali bo'ldimi? Yulduzcha bosing.</h2>
+      <p style="max-width:52ch;margin-bottom:32px">Har bir yulduzcha bu toolkit'ni ko'proq o'zbek tadbirkor va kontent yaratuvchiga yetkazadi.</p>
+      <a class="btn" href="https://github.com/abdulazizyursinaliyev-source/akmal-ai-toolkit">★ Star on GitHub</a>
+    </div>
+  </div>
+</section>
+
+<footer><div class="wrap">Akmal AI Toolkit · MIT · Dizayn tizimi: Taste Skill (MIT)</div></footer>
+</body>
+</html>
