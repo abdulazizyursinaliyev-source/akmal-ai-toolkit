@@ -1,3 +1,5 @@
+<a href="https://abdulazizyursinaliyev-source.github.io/akmal-ai-toolkit/"><img src="docs/hero.png" alt="Akmal AI Toolkit — brifdan tayyor Reels'gacha" width="100%"></a>
+
 <div align="center">
 
 # Akmal AI Toolkit
