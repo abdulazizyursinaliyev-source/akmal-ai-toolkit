@@ -1,29 +1,96 @@
-# Video Prompt Skill (Google Veo / Gemini, 2026)
+# 🎬 Video Prompt - Google Veo 3.1 / Gemini
 
-## Formula
+Reklama va Reels uchun video prompt yozish tizimi. Nusxa oling → `[...]` ni to'ldiring → modelga bering.
 
-[Cinematography] + [Subject] + [Action] + [Context] + [Style & Ambiance]
+---
 
-- Cinematography: kamera harakati (dolly, tracking, crane, POV, wide, close-up)
-- Subject: asosiy qahramon
-- Action: nima qilyapti
-- Context: joy, fon
-- Style & Ambiance: umumiy uslub, kayfiyat, yoritish
+## 1. Formula (5 qism)
 
-## Texnik cheklovlar
+```
+[Kamera] + [Qahramon] + [Harakat] + [Joy] + [Uslub va yorug'lik] + [Ovoz]
+```
 
-- Klip uzunligi: faqat 4, 6 yoki 8 soniya (15-20s reels uchun 2-3 klip ketma-ket)
-- Aspect ratio: 16:9 yoki 9:16
+| Qism | Nima yoziladi | Misol |
+|---|---|---|
+| Kamera | Kadr turi va harakati | `close-up`, `slow dolly-in`, `tracking shot`, `top-down`, `POV` |
+| Qahramon | Asosiy obyekt - aniq tavsif | `a red Frutata apple chips bag` |
+| Harakat | Bitta asosiy harakat | `a hand tears the bag open` |
+| Joy | Fon, muhit | `rustic wooden kitchen table` |
+| Uslub | Yorug'lik, rang, kayfiyat | `warm golden-hour light, shallow depth of field` |
+| Ovoz | SFX, musiqa, nutq | `SFX: crisp crunch. Music: upbeat light acoustic.` |
 
-## Umumiy shablon
+**Oltin qoida:** bitta klip = bitta harakat. 2-3 harakatni bitta klipga tiqish - eng ko'p uchraydigan xato.
 
-Close-up tracking shot slowly revealing [MAHSULOT] on a clean surface, soft natural light. A hand reaches into frame and interacts with it. Background blurred, warm setting. Style: vibrant commercial advertising, shallow depth of field, warm color grading.
+## 2. Texnik parametrlar
 
-## Tayyor misol - Frutata chips
+| Parametr | Qiymat |
+|---|---|
+| Klip uzunligi | 4, 6 yoki 8 soniya |
+| Reels / Stories / TikTok | **9:16** (vertikal) |
+| YouTube / sayt | 16:9 |
+| 15-24s reklama | 2-3 ta 8s klip ketma-ket |
+| Bir xil mahsulot/yuz | `reference image` yuklang (har bir klipda o'sha surat) |
 
-Close-up tracking shot slowly revealing a crispy Frutata chips bag on a rustic wooden table, soft natural light from the left. A hand opens the bag, chips spill out in slow motion. Background blurred warm kitchen. Style: vibrant commercial advertising, shallow depth of field, warm golden-hour grading, crunchy appetizing mood.
+## 3. Umumiy shablon
 
-## Timestamp format
+```text
+[KADR TURI] of [MAHSULOT - rang, qadoq, brend] on [JOY].
+[BITTA HARAKAT].
+Background: [FON], softly blurred.
+Lighting: [YORUG'LIK].
+Style: premium commercial advertising, shallow depth of field, [RANG GRADING].
+Audio: SFX: [OVOZ EFFEKTI]. Music: [MUSIQA USLUBI]. No dialogue.
+Vertical 9:16.
+```
 
-[00:00-00:04] tavsif.
-[00:04-00:08] tavsif. SFX: ovoz.
+**Negative prompt (doim qo'shing):**
+```text
+no text, no subtitles, no watermark, no logo distortion, no extra hands, no deformed packaging, no blurry product
+```
+
+## 4. Tayyor misollar
+
+### Frutata chips - 8s
+
+```text
+Close-up slow dolly-in of a Frutata apple chips bag standing on a rustic wooden table.
+A hand tears the bag open and golden apple chips spill out in slow motion.
+Background: warm home kitchen, softly blurred.
+Lighting: soft natural window light from the left, golden-hour warmth.
+Style: premium food commercial, shallow depth of field, warm golden grading, crunchy appetizing mood.
+Audio: SFX: bag rustle, crisp crunch. Music: light upbeat acoustic. No dialogue.
+Vertical 9:16.
+```
+
+### Peppy (bolalar mahsuloti) - 8s
+
+```text
+Medium tracking shot of a smiling child unboxing a [PEPPY MAHSULOTI] on a bright playroom carpet.
+The child lifts the product up toward the camera with excitement.
+Background: colorful, tidy playroom with soft toys, softly blurred.
+Lighting: bright, soft daylight, cheerful.
+Style: family lifestyle commercial, pastel color palette, natural and authentic.
+Audio: SFX: box opening, child laughter. Music: playful light ukulele. No dialogue.
+Vertical 9:16.
+```
+
+## 5. 24 soniyalik reklama - timestamp usuli
+
+3 ta klipni alohida yarating, keyin CapCut/montajda ulang:
+
+```text
+Klip 1 [00:00-00:08] HOOK - mahsulot dramatik ko'rinishda (close-up, sekin harakat).
+Klip 2 [00:08-00:16] FOYDA - mahsulot ishlatilmoqda (qo'l, odam, natija).
+Klip 3 [00:16-00:24] CTA - mahsulot + qadoq bir kadrda, toza fon (matn montajda qo'shiladi).
+```
+
+**Hook qoidasi:** birinchi 1.5 soniyada harakat yoki kutilmagan kadr bo'lsin - aks holda tomoshabin o'tkazib yuboradi.
+
+## 6. Tekshiruv ro'yxati (generatsiyadan oldin)
+
+- [ ] Bitta klip - bitta harakat
+- [ ] Format 9:16 (Reels uchun)
+- [ ] Mahsulot aniq tasvirlangan (rang, qadoq)
+- [ ] Ovoz qismi yozilgan
+- [ ] Negative prompt qo'shilgan
+- [ ] Matn/yozuv videoga **emas**, montajda qo'shiladi (AI matnni buzadi)
