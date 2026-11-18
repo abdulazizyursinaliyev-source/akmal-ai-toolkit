@@ -54,9 +54,7 @@ So'ra (bo'lmasa `[ ]` qoldir, taxmin qilma):
 
 ## Dizayn tizimi
 
-Barcha grafik qatlamlar (subtitr, matn, CTA, end card) **Taste Skill** tokenlaridan: `templates/brand-tokens.css`.
-- Bitta aksent `#1a4be0`, neytral `#111111` / `#f4f4f4`, bitta ground (sand/sky/sage/painting).
-- Ajratish kontrast bilan, sentence case, radius 8/12/20.
+Barcha grafik qatlamlar (subtitr, matn, CTA, end card) — [`skills/brand-design`](../brand-design/SKILL.md) qoidalari va `templates/brand-tokens.css` tokenlari.
 
 ## Qat'iy qoidalar
 
