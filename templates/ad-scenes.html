@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ad Scenes</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+  /*
+   * AD SCENES — 15 soniyalik kinetik reklama: HOOK → MUAMMO → MAHSULOT → FOYDA → CTA.
+   * Dizayn: Taste Skill. Bitta "ground" (standart: sand), bitta aksent, sentence case,
+   * ajratish kontrast bilan. ?ground=sand|sky|sage|painting bilan almashtiring.
+   * Faqat SCENES massivini o'zgartirasiz — animatsiya avtomatik quriladi.
+   */
+  :root {
+    --font: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --action: #1a4be0; --action-ink: #ffffff;
+    --r-md: 12px; --r-lg: 20px; --r-btn: 8px;
+    /* ground: sand (standart) */
+    --g-bg: #d9ccb7; --g-surface: #e9e0d2; --g-ink: #2a2622; --g-muted: #5a534a; --g-accent: #a8794a;
+  }
+  [data-ground="sky"]      { --g-bg: #c6d3df; --g-surface: #d6e0e9; --g-ink: #25303a; --g-muted: #4d5964; --g-accent: #3f6a92; }
+  [data-ground="sage"]     { --g-bg: #cdd6c6; --g-surface: #dce3d6; --g-ink: #262d24; --g-muted: #535b51; --g-accent: #6c8e63; }
+  [data-ground="painting"] { --g-bg: #79a8d6; --g-surface: #a6c4e2; --g-ink: #16212c; --g-muted: #273949; --g-accent: #9c9b3c; }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; background: #000; overflow: hidden; }
+  body { display: grid; place-items: center; font-family: var(--font); }
+  .stage { position: relative; width: min(100vw, calc(100vh * 9 / 16)); aspect-ratio: 9/16; overflow: hidden;
+    container-type: inline-size; background: var(--g-bg); color: var(--g-ink); }
+  .render .stage { width: 100vw; height: 100vh; }
+
+  /* Xavfsiz zona: tepadan 15%, pastdan 20% */
+  .scene { position: absolute; inset: 15% 8% 20% 8%; display: flex; flex-direction: column; justify-content: center;
+    align-items: flex-start; gap: 4.4cqw; visibility: hidden; }
+  .meta { font-weight: 500; font-size: 4.2cqw; color: var(--g-muted); }
+  .title { font-weight: 500; font-size: 10.4cqw; line-height: 1.06; max-width: 100%; overflow-wrap: anywhere; letter-spacing: -0.025em; }
+  .title .w { display: inline-block; overflow: hidden; vertical-align: bottom; padding-bottom: .06em; }
+  .title .w > span { display: inline-block; }
+  .title .dim { color: var(--g-muted); }          /* kontrast bilan ajratish */
+  .sub { font-weight: 400; font-size: 5cqw; line-height: 1.4; color: var(--g-muted); max-width: 76cqw; }
+  .product { align-self: center; width: 70cqw; aspect-ratio: 1; border-radius: var(--r-lg); display: grid; place-items: center;
+    background: var(--g-surface); font-size: 26cqw; overflow: hidden; }
+  .product img { width: 86%; height: 86%; object-fit: contain; filter: drop-shadow(0 3cqw 4cqw rgb(0 0 0 / .18)); }
+  .list { list-style: none; display: grid; gap: 2.4cqw; width: 100%; }
+  .list li { display: flex; justify-content: space-between; align-items: center; gap: 3cqw;
+    font-weight: 500; font-size: 5.4cqw; padding: 3.6cqw 4.4cqw; border-radius: var(--r-md); background: var(--g-surface); }
+  .list li b { font-weight: 700; color: var(--g-accent); }
+  .cta { font-weight: 500; font-size: 5.6cqw; padding: 4cqw 7cqw; border-radius: var(--r-btn);
+    background: var(--action); color: var(--action-ink); }
+  .handle { font-weight: 500; font-size: 4.4cqw; color: var(--g-muted); }
+  .bar { position: absolute; left: 8%; right: 8%; bottom: 12%; height: .5cqw; background: rgb(0 0 0 / .1); border-radius: 1cqw; overflow: hidden; }
+  .bar i { display: block; height: 100%; background: var(--g-ink); transform: scaleX(0); transform-origin: left; }
+  .controls { position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%); }
+  .controls button { height: 36px; padding: 0 14px; border-radius: 8px; border: 0; background: #111; color: #f4f4f4; font: 500 13px var(--font); cursor: pointer; }
+  .render .controls { display: none; }
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+  <div id="scenes"></div>
+  <div class="bar"><i id="bar"></i></div>
+</div>
+<div class="controls"><button onclick="tl.restart()">↺ Qayta</button></div>
+
+<script>
+/* ============ SCENES ============
+ * type: hook | text | product | benefits | cta
+ * title ichida ~so'z~ → xira (muted) — asosiy so'z kontrast bilan ajraladi.
+ * Faqat haqiqiy da'volar. Narx yozilmaydi (DM'da).
+ */
+const SCENES = [
+  { type: 'hook',     dur: 2.2, meta: '2 soniyada:', title: 'Farzandingiz ~yana~ telefondami?' },
+  { type: 'text',     dur: 2.6, title: 'Ekran emas — ~haqiqiy~ o\'yin.', sub: 'Qo\'l bilan o\'ynash — diqqat va tasavvurni rivojlantiradi.' },
+  { type: 'product',  dur: 3.0, emoji: '🧸', image: '', title: 'Peppy ~to\'plami~' },
+  { type: 'benefits', dur: 3.2, title: 'Nega ~aynan~ biz', items: [['Material', '[TASDIQLANG]'], ['Yosh', '[3+]'], ['Yetkazish', 'O\'zbekiston bo\'ylab']] },
+  { type: 'cta',      dur: 3.5, title: 'Narxini ~bilmoqchimisiz?~', cta: 'Izohga «narx» deb yozing', handle: '@PEEPY.uz' },
+];
+/* ================================ */
+
+const qs = new URLSearchParams(location.search);
+const isRender = qs.has('render');
+if (isRender) document.documentElement.classList.add('render');
+const isEmbed = window.self !== window.top;   // demo saytida iframe ichida — tugmalarsiz, takrorlanadi
+if (isEmbed) document.documentElement.classList.add('render');
+if (qs.get('ground')) document.documentElement.dataset.ground = qs.get('ground');
+
+const words = t => t.replace(/~([^~]+)~/g, (_, x) => x.split(' ').map(w => `\u0001${w}`).join(' '))
+  .split(' ').map(w => {
+    const dim = w.startsWith('\u0001'); const clean = w.replace('\u0001', '');
+    return `<span class="w"><span class="${dim ? 'dim' : ''}">${clean}</span></span>`;
+  }).join(' ');
+
+const root = document.getElementById('scenes');
+const tl = gsap.timeline({ paused: isRender, defaults: { ease: 'power3.out' } });
+let t = 0;
+
+SCENES.forEach((s, i) => {
+  const el = document.createElement('section');
+  el.className = 'scene';
+  el.innerHTML = `
+    ${s.meta ? `<div class="meta">${s.meta}</div>` : ''}
+    ${s.type === 'product' ? `<div class="product">${s.image ? `<img src="${s.image}" alt="">` : s.emoji}</div>` : ''}
+    <h1 class="title">${words(s.title)}</h1>
+    ${s.sub ? `<p class="sub">${s.sub}</p>` : ''}
+    ${s.items ? `<ul class="list">${s.items.map(([k, v]) => `<li><span>${k}</span><b>${v}</b></li>`).join('')}</ul>` : ''}
+    ${s.cta ? `<div class="cta">${s.cta}</div>` : ''}
+    ${s.handle ? `<div class="handle">${s.handle}</div>` : ''}`;
+  root.appendChild(el);
+  const q = sel => el.querySelectorAll(sel);
+
+  tl.set(el, { visibility: 'visible' }, t);
+  tl.from(q('.meta'), { opacity: 0, y: 20, duration: .3 }, t)
+    .from(q('.title .w > span'), { yPercent: 110, duration: .55, stagger: .06, ease: 'power4.out' }, t + .05)
+    .from(q('.sub'), { opacity: 0, y: 24, duration: .5 }, t + .4)
+    .from(q('.product'), { scale: .85, opacity: 0, duration: .7, ease: 'expo.out' }, t)
+    .from(q('.product > *'), { scale: .6, rotate: -8, duration: .8, ease: 'back.out(1.8)' }, t + .1)
+    .from(q('.list li'), { opacity: 0, x: -40, duration: .4, stagger: .14 }, t + .35)
+    .from(q('.cta'), { opacity: 0, y: 30, duration: .45 }, t + .45)
+    .from(q('.handle'), { opacity: 0, duration: .4 }, t + .8);
+  if (s.type === 'hook') tl.fromTo(el, { scale: 1.06 }, { scale: 1, duration: s.dur, ease: 'none' }, t); // sekin "punch-in"
+  if (s.cta) tl.to(q('.cta'), { scale: 1.04, duration: .5, repeat: 3, yoyo: true, ease: 'sine.inOut' }, t + 1);
+
+  if (i < SCENES.length - 1) {
+    const out = t + s.dur;
+    tl.to(el.children, { opacity: 0, y: -40, duration: .25, stagger: .03, ease: 'power2.in' }, out - .3)
+      .set(el, { visibility: 'hidden' }, out);
+  }
+  t += s.dur;
+});
+tl.to('#bar', { scaleX: 1, duration: t, ease: 'none' }, 0);
+
+window.__timeline = tl;
+window.__duration = t;
+window.__seek = x => { tl.seek(x, false); };
+document.fonts.ready.then(() => { if (!isRender) tl.play(0); if (isEmbed && !isRender) tl.repeat(-1).repeatDelay(0.8); window.__ready = true; });
+</script>
+</body>
+</html>

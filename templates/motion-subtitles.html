@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="uz" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Motion Subtitles</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+  /*
+   * MOTION SUBTITLES — so'zma-so'z animatsion subtitr (Reels / TikTok / Shorts).
+   * Dizayn: Taste Skill tokenlari (templates/brand-tokens.css).
+   *   - Faol so'z KONTRAST bilan ajraladi (to'liq --ink), qolganlari xira — marker/fon yo'q.
+   *   - Urg'u so'zi: kattaroq va qalinroq (rang emas).
+   *   - Sentence case, -0.025em tracking.
+   * Sozlash: CONFIG. Video: node scripts/render-html.js templates/motion-subtitles.html out.mp4
+   */
+  :root {
+    --bg: #111111; --surface: #1c1c1c; --ink: #f4f4f4; --muted: #a3a3a3;
+    --accent: #1a4be0; --ground: #111111;
+    --font: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; background: #000; overflow: hidden; }
+  body { display: grid; place-items: center; font-family: var(--font); }
+
+  .stage {
+    position: relative; width: min(100vw, calc(100vh * 9 / 16)); aspect-ratio: 9 / 16;
+    background: var(--ground); overflow: hidden; container-type: inline-size;
+  }
+  .render .stage { width: 100vw; height: 100vh; }
+  .stage video, .stage .bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  /* Video ustida o'qilishi uchun pastdan yumshoq soya */
+  .stage::after { content: ""; position: absolute; inset: 55% 0 0 0; pointer-events: none;
+    background: linear-gradient(to bottom, transparent, rgb(0 0 0 / .55)); }
+
+  /* Xavfsiz zona: tepadan 15%, pastdan 20%+ (Reels UI), yon 7% */
+  .captions {
+    position: absolute; z-index: 2; left: 7%; right: 7%; bottom: 24%;
+    display: flex; flex-wrap: wrap; justify-content: center; align-items: baseline;
+    gap: 0 2cqw; text-align: center;
+  }
+  .word {
+    display: inline-block; font-weight: 500; font-size: 8cqw; line-height: 1.08;
+    letter-spacing: -0.025em; color: var(--ink); opacity: .42;
+    text-shadow: 0 0.3cqw 1.4cqw rgb(0 0 0 / .6);
+    will-change: transform, opacity;
+  }
+  .word.emph { font-weight: 700; font-size: 10cqw; }
+
+  .progress { position: absolute; z-index: 3; left: 0; top: 0; height: 0.5cqw; width: 100%;
+    background: var(--ink); transform-origin: left; transform: scaleX(0); }
+
+  .controls { position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 8px; font: 500 13px var(--font); }
+  .controls button { height: 36px; padding: 0 14px; border-radius: 8px; border: 0; cursor: pointer;
+    background: var(--ink); color: var(--bg); font: inherit; }
+  .controls button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .render .controls { display: none; }
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+  <!-- Fon: <video class="bg" src="clip.mp4" muted playsinline></video> -->
+  <div class="progress" id="progress"></div>
+  <div class="captions" id="captions"></div>
+</div>
+<div class="controls">
+  <button onclick="tl.restart()">↺ Qayta</button>
+  <button onclick="tl.paused(!tl.paused())">⏯ Pauza</button>
+  <button onclick="cycleStyle()">Uslub: <span id="sname"></span></button>
+</div>
+
+<script>
+/* ============ CONFIG ============
+ * words: [so'z, boshlanish (s), tugash (s), belgi]   belgi: "" | "emph"
+ * Vaqtlar: Whisper / ElevenLabs Scribe word-timestamps (skills/motion-subtitles/SKILL.md).
+ * Matn — spiker AYNAN aytgan so'zlar, o'zbek lotin yozuvida.
+ * style: pop | rise | fade | typewriter       ground: ?ground=sand|sky|sage|painting
+ */
+const CONFIG = {
+  style: new URLSearchParams(location.search).get('style') || 'pop',
+  maxWordsPerLine: 3,
+  words: [
+    ["Bu",       0.20, 0.45, ""],
+    ["videoni",  0.45, 0.90, ""],
+    ["AI",       0.90, 1.30, "emph"],
+    ["30",       1.30, 1.60, "emph"],
+    ["soniyada", 1.60, 2.20, ""],
+    ["qildi.",   2.20, 2.80, ""],
+    ["Promptni", 3.00, 3.50, ""],
+    ["izohda",   3.50, 3.95, ""],
+    ["oling",    3.95, 4.60, "emph"],
+  ]
+};
+const GROUNDS = { sand: '#2a2622', sky: '#25303a', sage: '#262d24', painting: '#16212c' }; // ground-*-ink: qorong'i variant
+/* ================================ */
+
+const STYLES = ['pop', 'rise', 'fade', 'typewriter'];
+const qs = new URLSearchParams(location.search);
+const isRender = qs.has('render');
+if (isRender) document.documentElement.classList.add('render');
+const isEmbed = window.self !== window.top;   // demo saytida iframe ichida — tugmalarsiz, takrorlanadi
+if (isEmbed) document.documentElement.classList.add('render');
+if (GROUNDS[qs.get('ground')]) document.documentElement.style.setProperty('--ground', GROUNDS[qs.get('ground')]);
+
+const cap = document.getElementById('captions');
+let tl;
+
+function groups(words, n) {
+  const out = []; let cur = [];
+  words.forEach((w, i) => {
+    cur.push(w);
+    const pause = words[i + 1] && words[i + 1][1] - w[2] > 0.15;
+    if (cur.length >= n || pause || i === words.length - 1) { out.push(cur); cur = []; }
+  });
+  return out;
+}
+
+function build() {
+  if (tl) tl.kill();
+  cap.innerHTML = '';
+  document.getElementById('sname').textContent = CONFIG.style;
+  tl = gsap.timeline({ paused: isRender });
+  const lines = groups(CONFIG.words, CONFIG.maxWordsPerLine);
+  const total = CONFIG.words.at(-1)[2] + 0.4;
+
+  tl.to('#progress', { scaleX: 1, duration: total, ease: 'none' }, 0);
+
+  lines.forEach((line, li) => {
+    const els = line.map(([txt, , , flag]) => {
+      const s = document.createElement('span');
+      s.className = 'word ' + flag; s.textContent = txt;
+      s.style.display = 'none'; cap.appendChild(s); return s;
+    });
+    const start = line[0][1];
+    const end = lines[li + 1] ? lines[li + 1][0][1] : total;
+
+    tl.set(els, { display: 'inline-block' }, start);
+
+    line.forEach(([, ws, we], i) => {
+      const el = els[i];
+      // Kirish
+      if (CONFIG.style === 'pop')        tl.fromTo(el, { scale: .6, opacity: 0 }, { scale: 1, opacity: 1, duration: .26, ease: 'back.out(2.4)' }, ws);
+      else if (CONFIG.style === 'rise')  tl.fromTo(el, { yPercent: 60, opacity: 0 }, { yPercent: 0, opacity: 1, duration: .32, ease: 'power3.out' }, ws);
+      else if (CONFIG.style === 'fade')  tl.fromTo(el, { opacity: 0 }, { opacity: 1, duration: .2 }, start + i * .04);
+      else                               tl.fromTo(el, { opacity: 0 }, { opacity: 1, duration: .01 }, ws);
+      // Faol so'z — kontrast bilan (to'liq oq), keyin xiralashadi. tl.set seek'da ham to'g'ri ishlaydi.
+      tl.to(el, { opacity: 1, duration: .08 }, ws + .01)
+        .to(el, { opacity: .42, duration: .15 }, we);
+      if (el.classList.contains('emph')) tl.fromTo(el, { scale: 1 }, { scale: 1.06, duration: .14, yoyo: true, repeat: 1, ease: 'power1.inOut' }, ws);
+    });
+
+    tl.to(els, { opacity: 0, yPercent: -30, duration: .15, stagger: .02, ease: 'power2.in' }, end - .15)
+      .set(els, { display: 'none' }, end);
+  });
+
+  window.__timeline = tl;
+  window.__duration = total;
+}
+
+function cycleStyle() {
+  CONFIG.style = STYLES[(STYLES.indexOf(CONFIG.style) + 1) % STYLES.length];
+  build(); tl.play(0);
+}
+
+window.__seek = t => { tl.seek(t, false); };
+document.fonts.ready.then(() => { build(); if (!isRender) tl.play(0); if (isEmbed && !isRender) tl.repeat(-1).repeatDelay(0.8); window.__ready = true; });
+</script>
+</body>
+</html>

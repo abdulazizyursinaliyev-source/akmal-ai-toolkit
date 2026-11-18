@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Logo Reveal — GSAP</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+  /*
+   * LOGO REVEAL — 3.5 soniyalik brend intro/outro.
+   * O'z logongiz: #mark ichidagi <path> larni o'z SVG'ingiz bilan almashtiring
+   * (har bir path chiziq bo'lib "chiziladi", keyin rang bilan to'ladi).
+   * Brend: Taste Skill tokenlari — --brand (aksent #1a4be0), --brand-2 (muted), BRAND_NAME, TAGLINE ni o'zgartiring.
+   */
+  :root { /* Taste Skill tokenlari */ --bg: #111111; --brand: #1a4be0; --brand-2: #a3a3a3; --text: #f4f4f4;
+    --font: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; background: #000; overflow: hidden; }
+  body { display: grid; place-items: center; font-family: var(--font); }
+  .stage { position: relative; width: min(100vw, calc(100vh * 9 / 16)); aspect-ratio: 9/16;
+    background: var(--bg); overflow: hidden; container-type: inline-size; display: grid; place-items: center; }
+  .render .stage { width: 100vw; height: 100vh; }
+  .center { display: grid; justify-items: center; gap: 4cqw; }
+  #mark { width: 42cqw; height: 42cqw; overflow: visible; }
+  #mark path { fill: transparent; stroke: var(--text); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+  .name { font-weight: 500; font-size: 13cqw; letter-spacing: -0.025em; color: var(--text); display: flex; }
+  .name span { display: inline-block; }
+  .tag { font-weight: 400; font-size: 4.4cqw; letter-spacing: -0.01em; color: var(--brand-2); }
+  .ring { position: absolute; width: 60cqw; height: 60cqw; border-radius: 50%;
+    border: 0.6cqw solid var(--brand); opacity: 0; }
+  .flash { position: absolute; inset: 0; background: #fff; opacity: 0; }
+  .particles i { position: absolute; left: 50%; top: 45%; width: 1.6cqw; height: 1.6cqw;
+    border-radius: 50%; background: var(--text); opacity: 0; }
+  .controls { position: fixed; bottom: 12px; left: 50%; transform: translateX(-50%); }
+  .controls button { height: 36px; padding: 0 14px; border-radius: 8px; border: 0; background: var(--text); color: var(--bg); font: 500 13px var(--font); cursor: pointer; }
+  .render .controls { display: none; }
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+  <div class="ring" id="ring"></div>
+  <div class="particles" id="particles"></div>
+  <div class="center">
+    <!-- O'Z LOGONGIZ: shu SVG ichini almashtiring (viewBox 0 0 100 100 tavsiya) -->
+    <svg id="mark" viewBox="0 0 100 100">
+      <path d="M50 8 C72 8 90 26 90 48 C90 74 66 92 50 92 C34 92 10 74 10 48 C10 26 28 8 50 8 Z" data-fill="var(--brand)"/>
+      <path d="M34 40 C34 30 42 24 50 24 C58 24 66 30 66 40 C66 50 58 54 50 54 L50 72" data-fill="none" style="stroke-width:7"/>
+      <path d="M46 80 a4 4 0 1 0 8 0 a4 4 0 1 0 -8 0" data-fill="var(--text)"/>
+    </svg>
+    <div class="name" id="name"></div>
+    <div class="tag" id="tag"></div>
+  </div>
+  <div class="flash" id="flash"></div>
+</div>
+<div class="controls"><button onclick="tl.restart()">↺ Qayta</button></div>
+
+<script>
+const BRAND_NAME = 'Peppy';
+const TAGLINE = 'Bolalar dunyosi';
+
+const isRender = new URLSearchParams(location.search).has('render');
+if (isRender) document.documentElement.classList.add('render');
+const isEmbed = window.self !== window.top;   // demo saytida iframe ichida — tugmalarsiz, takrorlanadi
+if (isEmbed) document.documentElement.classList.add('render');
+
+const nameEl = document.getElementById('name');
+nameEl.innerHTML = [...BRAND_NAME].map(c => `<span>${c}</span>`).join('');
+document.getElementById('tag').textContent = TAGLINE;
+const pWrap = document.getElementById('particles');
+for (let i = 0; i < 18; i++) pWrap.appendChild(document.createElement('i'));
+
+// CSS o'zgaruvchisini haqiqiy rangga aylantiradi (GSAP var() ni tween qila olmaydi)
+const css = v => { const m = /var\((--[\w-]+)\)/.exec(v); return m ? getComputedStyle(document.documentElement).getPropertyValue(m[1]).trim() : v; };
+const paths = [...document.querySelectorAll('#mark path')];
+paths.forEach(p => { const L = p.getTotalLength(); p.style.strokeDasharray = L; p.style.strokeDashoffset = L; });
+
+const tl = gsap.timeline({ paused: isRender, defaults: { ease: 'power3.out' } });
+tl
+  // 1. Chiziq chizilishi
+  .to(paths, { strokeDashoffset: 0, duration: 0.9, stagger: 0.15, ease: 'power2.inOut' }, 0.1)
+  // 2. Rang bilan to'lish + "pop"
+  .to(paths, {
+      fill: (i, el) => el.dataset.fill === 'none' ? 'rgba(0,0,0,0)' : css(el.dataset.fill),
+      stroke: (i, el) => el.dataset.fill === 'none' ? css('var(--text)') : css(el.dataset.fill),
+      duration: 0.35, stagger: 0.05 }, 1.0)
+  .fromTo('#mark', { scale: 0.85 }, { scale: 1, duration: 0.6, ease: 'elastic.out(1, 0.45)' }, 1.0)
+  .to('#flash', { opacity: 0.18, duration: 0.05 }, 1.0).to('#flash', { opacity: 0, duration: 0.3 }, 1.05)
+  // 3. Halqa to'lqini va zarrachalar
+  .fromTo('#ring', { scale: 0.4, opacity: 0.9 }, { scale: 1.8, opacity: 0, duration: 0.9, ease: 'power2.out' }, 1.0)
+  .fromTo('#particles i', { x: 0, y: 0, opacity: 1, scale: 1 }, {
+    x: () => gsap.utils.random(-380, 380), y: () => gsap.utils.random(-420, 300),
+    opacity: 0, scale: 0.2, duration: 1.1, ease: 'expo.out', stagger: 0.01 }, 1.0)
+  // 4. Nom harfma-harf
+  .from('#name span', { yPercent: 120, opacity: 0, rotate: 8, duration: 0.55, stagger: 0.05, ease: 'back.out(2.2)' }, 1.25)
+  // 5. Shior
+  .from('#tag', { opacity: 0, y: 24, duration: 0.6 }, 1.6)
+  // 6. Ushlab turish (logo ekranda turishi uchun)
+  .to({}, { duration: 1.0 });
+
+window.__timeline = tl;
+window.__duration = tl.duration();
+window.__seek = t => { tl.seek(t, false); };
+document.fonts.ready.then(() => { if (!isRender) tl.play(0); if (isEmbed && !isRender) tl.repeat(-1).repeatDelay(0.8); window.__ready = true; });
+</script>
+</body>
+</html>

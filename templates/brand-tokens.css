@@ -1,0 +1,54 @@
+/*
+ * brand-tokens.css — Akmal AI Toolkit dizayn tizimi ("Taste Skill" asosida).
+ * Manba: github.com/Leonxlnx/taste-skill (MIT). Barcha shablonlar shu qiymatlardan foydalanadi.
+ *
+ * QOIDALAR (qisqa):
+ *  - Bitta aksent: --accent. Tugma/havola/fokus: --action.
+ *  - Ajratish KONTRAST bilan (o'lcham, qalinlik, shaffoflik), rang marker bilan emas.
+ *  - Sentence case. Tracked bosh harfli label yo'q.
+ *  - Bir kadrda bitta "ground" (sand | sky | sage | painting).
+ *  - Radius: 8 / 12 / 20. Spacing: 4..128 shkalasi.
+ */
+:root {
+  /* Asosiy (light) */
+  --bg: #ffffff;
+  --surface: #f4f4f4;
+  --ink: #111111;
+  --muted: #6b6b6b;
+  --accent: #1a4be0;
+  --accent-ink: #ffffff;
+  --action: #1a4be0;
+  --action-ink: #ffffff;
+
+  /* Grounds — kadr foni uchun, bittadan */
+  --sand-bg: #d9ccb7;  --sand-surface: #e9e0d2;  --sand-ink: #2a2622;  --sand-muted: #5a534a;  --sand-accent: #a8794a;
+  --sky-bg: #c6d3df;   --sky-surface: #d6e0e9;   --sky-ink: #25303a;   --sky-muted: #4d5964;   --sky-accent: #3f6a92;
+  --sage-bg: #cdd6c6;  --sage-surface: #dce3d6;  --sage-ink: #262d24;  --sage-muted: #535b51;  --sage-accent: #6c8e63;
+  --painting-bg: #79a8d6; --painting-surface: #a6c4e2; --painting-ink: #16212c; --painting-muted: #273949; --painting-accent: #9c9b3c;
+
+  /* Tipografiya */
+  --font-display: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-text: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --tracking-tight: -0.025em;
+
+  /* Radius */
+  --r-sm: 8px; --r-md: 12px; --r-lg: 20px; --r-btn: 8px;
+
+  /* Spacing */
+  --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-5: 24px;
+  --s-6: 32px; --s-7: 48px; --s-8: 64px; --s-9: 96px; --s-10: 128px;
+
+  --shadow-float: 0 1px 2px rgb(0 0 0 / .12), 0 4px 12px -4px rgb(0 0 0 / .28);
+}
+
+/* Dark (inverse ground) — video ustidagi subtitr va qorong'i kadrlar uchun */
+[data-theme="dark"] {
+  --bg: #111111;
+  --surface: #1c1c1c;
+  --ink: #f4f4f4;
+  --muted: #a3a3a3;
+  --accent: #ffffff;
+  --accent-ink: #111111;
+  --action: #ffffff;
+  --action-ink: #111111;
+}
