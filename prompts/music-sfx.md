@@ -28,7 +28,7 @@ instrumental, no vocals, clean mix leaving space for voice-over, 30 seconds, end
 
 **Qoidalar:**
 - Reklama ostida doim **instrumental** (vokal VO bilan to'qnashadi).
-- Musiqa VO dan **18–20 dB past** — `master-audio.sh` avtomatik pasaytiradi (ducking).
+- Darajalar — 3-bo'limdagi miks jadvali; `master-audio.sh` musiqani avtomatik pasaytiradi (ducking).
 - Tijoriy foydalanish huquqini platforma shartlaridan tekshiring.
 
 ## 2. SFX — ovoz dizayni

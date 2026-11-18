@@ -41,18 +41,9 @@ Top-down flat lay of [MAHSULOT] surrounded by [3-4 TEGISHLI NARSA] on a [FON] su
 Minimal abstract background, [HEX1] to [HEX2] subtle grain, soft light falloff from top right, large empty area in the center for typography, 4:5.
 ```
 
-## Brend ranglari (Taste Skill)
+## Brend ranglari
 
-Promptga HEX bilan bering — model aniqroq ushlaydi:
-
-| Token | HEX | Qayerda |
-|---|---|---|
-| ink | `#111111` | Matn, qorong'i fon |
-| surface | `#f4f4f4` | Yorug' fon |
-| accent | `#1a4be0` | Bitta urg'u (tugma, belgi) |
-| sand | `#d9ccb7` | Iliq fon (oziq-ovqat, bolalar) |
-| sky | `#c6d3df` | Sovuq fon (texnika) |
-| sage | `#cdd6c6` | Tabiiy fon (eko, meva) |
+Promptga ranglarni HEX bilan bering — model aniqroq ushlaydi. Qiymatlar: [`templates/brand-tokens.css`](../templates/brand-tokens.css), qoidalar: [`skills/brand-design`](../skills/brand-design/SKILL.md).
 
 ## Taqiqlar (negative)
 

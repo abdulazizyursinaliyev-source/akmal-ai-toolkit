@@ -84,7 +84,7 @@ Klip 2 [00:08-00:16] FOYDA - mahsulot ishlatilmoqda (qo'l, odam, natija).
 Klip 3 [00:16-00:24] CTA - mahsulot + qadoq bir kadrda, toza fon (matn montajda qo'shiladi).
 ```
 
-**Hook qoidasi:** birinchi 1.5 soniyada harakat yoki kutilmagan kadr bo'lsin - aks holda tomoshabin o'tkazib yuboradi.
+Hook kadri uchun: [`hook-library.md`](hook-library.md).
 
 ## 6. Tekshiruv ro'yxati (generatsiyadan oldin)
 

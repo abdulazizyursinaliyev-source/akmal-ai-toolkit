@@ -49,16 +49,8 @@ AI logo rasm (PNG) beradi; professional ish uchun **SVG** kerak:
 - [ ] Mashhur brendga o'xshamaydimi? (o'xshasa — huquqiy xavf)
 - [ ] Nom to'g'ri yozilganmi?
 
-## 6. Brend to'plami (logo'dan keyin)
+## 6. Logo'dan keyin
 
-| Element | Qiymat |
-|---|---|
-| Asosiy rang | [HEX] |
-| Ikkinchi rang | [HEX] |
-| Neytral | `#111111`, `#f4f4f4` |
-| Shrift (sarlavha) | [masalan: Inter 500] |
-| Shrift (matn) | [Inter 400] |
-| Radius | 8 / 12 / 20 px |
-| Logo atrofidagi bo'sh joy | logo balandligining 25% |
+Rang, shrift, radius — [`templates/brand-tokens.css`](../templates/brand-tokens.css). Logo atrofidagi bo'sh joy: logo balandligining 25%.
 
 Animatsiya qilish: [`templates/logo-reveal.html`](../templates/logo-reveal.html) — SVG'ingizni qo'ying, `render-html.js` bilan MP4 qiling.

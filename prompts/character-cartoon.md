@@ -57,16 +57,9 @@ Audio: [ISM] says in Uzbek: "[GAP]" — [ovoz tavsifi]. SFX: [tovush]. Music: [u
 Vertical 9:16, 8 seconds.
 ```
 
-## 5. Hikoya tuzilmasi (30–60s multfilm)
+## 5. Hikoya
 
-| Bit | Mazmun |
-|---|---|
-| 1. Dunyo | Qahramon odatiy holatda (3s) |
-| 2. Muammo | Kutilmagan to'siq (5s) |
-| 3. Urinish | Muvaffaqiyatsiz urinish — kulgili (8s) |
-| 4. Yechim | Mahsulot/g'oya paydo bo'ladi (8s) |
-| 5. G'alaba | Natija + his-tuyg'u (5s) |
-| 6. Yakun | Personaj kameraga qarab CTA aytadi (4s) |
+Hikoya tuzilmasi (6 bit) — [`skills/story-hook-character`](../skills/story-hook-character/SKILL.md), STORY rejimi.
 
 ## 6. Lab-sinxron (lip-sync)
 
